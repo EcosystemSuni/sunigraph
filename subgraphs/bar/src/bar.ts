@@ -4,20 +4,20 @@ import {
   BIG_DECIMAL_1E6,
   BIG_DECIMAL_ZERO,
   BIG_INT_ZERO,
-  SUSHI_BAR_ADDRESS,
-  SUSHI_TOKEN_ADDRESS,
-  SUSHI_USDT_PAIR_ADDRESS,
-} from 'const'
+  SUNI_BAR_ADDRESS,
+  SUNI_TOKEN_ADDRESS,
+  SUNI_ETH_PAIR_ADDRESS,
+} from './const'
 import { Address, BigDecimal, BigInt, dataSource, ethereum, log } from '@graphprotocol/graph-ts'
 import { Bar, History, User } from '../generated/schema'
-import { Bar as BarContract, Transfer as TransferEvent } from '../generated/SushiBar/Bar'
+import { Bar as BarContract, Transfer as TransferEvent } from '../generated/SuniBar/Bar'
 
-import { Pair as PairContract } from '../generated/SushiBar/Pair'
-import { SushiToken as SushiTokenContract } from '../generated/SushiBar/SushiToken'
+import { Pair as PairContract } from '../generated/SuniBar/Pair'
+import { SuniExchange as suexTokenContract } from '../generated/SuniBar/SuniExchange'
 
-// TODO: Get averages of multiple sushi stablecoin pairs
-function getSushiPrice(): BigDecimal {
-  const pair = PairContract.bind(SUSHI_USDT_PAIR_ADDRESS)
+// TODO: Get averages of multiple suex stablecoin pairs
+function getsuexPrice(): BigDecimal {
+  const pair = PairContract.bind(SUNI_ETH_PAIR_ADDRESS)
   const reserves = pair.getReserves()
   return reserves.value1.toBigDecimal().times(BIG_DECIMAL_1E18).div(reserves.value0.toBigDecimal()).div(BIG_DECIMAL_1E6)
 }
@@ -27,17 +27,17 @@ function createBar(block: ethereum.Block): Bar {
   const bar = new Bar(dataSource.address().toHex())
   bar.decimals = contract.decimals()
   bar.name = contract.name()
-  bar.sushi = contract.sushi()
+  bar.suex = contract.SUWP()
   bar.symbol = contract.symbol()
   bar.totalSupply = BIG_DECIMAL_ZERO
-  bar.sushiStaked = BIG_DECIMAL_ZERO
-  bar.sushiStakedUSD = BIG_DECIMAL_ZERO
-  bar.sushiHarvested = BIG_DECIMAL_ZERO
-  bar.sushiHarvestedUSD = BIG_DECIMAL_ZERO
-  bar.xSushiMinted = BIG_DECIMAL_ZERO
-  bar.xSushiBurned = BIG_DECIMAL_ZERO
-  bar.xSushiAge = BIG_DECIMAL_ZERO
-  bar.xSushiAgeDestroyed = BIG_DECIMAL_ZERO
+  bar.suexStaked = BIG_DECIMAL_ZERO
+  bar.suexStakedUSD = BIG_DECIMAL_ZERO
+  bar.suexHarvested = BIG_DECIMAL_ZERO
+  bar.suexHarvestedUSD = BIG_DECIMAL_ZERO
+  bar.xSuniMinted = BIG_DECIMAL_ZERO
+  bar.xSuniBurned = BIG_DECIMAL_ZERO
+  bar.xSuniAge = BIG_DECIMAL_ZERO
+  bar.xSuniAgeDestroyed = BIG_DECIMAL_ZERO
   bar.ratio = BIG_DECIMAL_ZERO
   bar.updatedAt = block.timestamp
   bar.save()
@@ -61,30 +61,30 @@ function createUser(address: Address, block: ethereum.Block): User {
   // Set relation to bar
   user.bar = dataSource.address().toHex()
 
-  user.xSushi = BIG_DECIMAL_ZERO
-  user.xSushiMinted = BIG_DECIMAL_ZERO
-  user.xSushiBurned = BIG_DECIMAL_ZERO
+  user.xSuni = BIG_DECIMAL_ZERO
+  user.xSuniMinted = BIG_DECIMAL_ZERO
+  user.xSuniBurned = BIG_DECIMAL_ZERO
 
-  user.sushiStaked = BIG_DECIMAL_ZERO
-  user.sushiStakedUSD = BIG_DECIMAL_ZERO
+  user.suexStaked = BIG_DECIMAL_ZERO
+  user.suexStakedUSD = BIG_DECIMAL_ZERO
 
-  user.sushiHarvested = BIG_DECIMAL_ZERO
-  user.sushiHarvestedUSD = BIG_DECIMAL_ZERO
+  user.suexHarvested = BIG_DECIMAL_ZERO
+  user.suexHarvestedUSD = BIG_DECIMAL_ZERO
 
   // In/Out
-  user.xSushiOut = BIG_DECIMAL_ZERO
-  user.sushiOut = BIG_DECIMAL_ZERO
+  user.xSuniOut = BIG_DECIMAL_ZERO
+  user.suexOut = BIG_DECIMAL_ZERO
   user.usdOut = BIG_DECIMAL_ZERO
 
-  user.xSushiIn = BIG_DECIMAL_ZERO
-  user.sushiIn = BIG_DECIMAL_ZERO
+  user.xSuniIn = BIG_DECIMAL_ZERO
+  user.suexIn = BIG_DECIMAL_ZERO
   user.usdIn = BIG_DECIMAL_ZERO
 
-  user.xSushiAge = BIG_DECIMAL_ZERO
-  user.xSushiAgeDestroyed = BIG_DECIMAL_ZERO
+  user.xSuniAge = BIG_DECIMAL_ZERO
+  user.xSuniAgeDestroyed = BIG_DECIMAL_ZERO
 
-  user.xSushiOffset = BIG_DECIMAL_ZERO
-  user.sushiOffset = BIG_DECIMAL_ZERO
+  user.xSuniOffset = BIG_DECIMAL_ZERO
+  user.suexOffset = BIG_DECIMAL_ZERO
   user.usdOffset = BIG_DECIMAL_ZERO
   user.updatedAt = block.timestamp
 
@@ -113,15 +113,15 @@ function getHistory(block: ethereum.Block): History {
     history = new History(id)
     history.date = date
     history.timeframe = 'Day'
-    history.sushiStaked = BIG_DECIMAL_ZERO
-    history.sushiStakedUSD = BIG_DECIMAL_ZERO
-    history.sushiHarvested = BIG_DECIMAL_ZERO
-    history.sushiHarvestedUSD = BIG_DECIMAL_ZERO
-    history.xSushiAge = BIG_DECIMAL_ZERO
-    history.xSushiAgeDestroyed = BIG_DECIMAL_ZERO
-    history.xSushiMinted = BIG_DECIMAL_ZERO
-    history.xSushiBurned = BIG_DECIMAL_ZERO
-    history.xSushiSupply = BIG_DECIMAL_ZERO
+    history.suexStaked = BIG_DECIMAL_ZERO
+    history.suexStakedUSD = BIG_DECIMAL_ZERO
+    history.suexHarvested = BIG_DECIMAL_ZERO
+    history.suexHarvestedUSD = BIG_DECIMAL_ZERO
+    history.xSuniAge = BIG_DECIMAL_ZERO
+    history.xSuniAgeDestroyed = BIG_DECIMAL_ZERO
+    history.xSuniMinted = BIG_DECIMAL_ZERO
+    history.xSuniBurned = BIG_DECIMAL_ZERO
+    history.xSuniSupply = BIG_DECIMAL_ZERO
     history.ratio = BIG_DECIMAL_ZERO
   }
 
@@ -142,103 +142,103 @@ export function transfer(event: TransferEvent): void {
   }
 
   const bar = getBar(event.block)
-  const barContract = BarContract.bind(SUSHI_BAR_ADDRESS)
+  const barContract = BarContract.bind(SUNI_BAR_ADDRESS)
 
-  const sushiPrice = getSushiPrice()
+  const suexPrice = getsuexPrice()
 
   bar.totalSupply = barContract.totalSupply().divDecimal(BIG_DECIMAL_1E18)
-  bar.sushiStaked = SushiTokenContract.bind(SUSHI_TOKEN_ADDRESS)
-    .balanceOf(SUSHI_BAR_ADDRESS)
+  bar.suexStaked = suexTokenContract.bind(SUNI_TOKEN_ADDRESS)
+    .balanceOf(SUNI_BAR_ADDRESS)
     .divDecimal(BIG_DECIMAL_1E18)
-  bar.ratio = bar.sushiStaked.div(bar.totalSupply)
+  bar.ratio = bar.suexStaked.div(bar.totalSupply)
 
   const what = value.times(bar.ratio)
 
-  // Minted xSushi
+  // Minted xSuni
   if (event.params.from == ADDRESS_ZERO) {
     const user = getUser(event.params.to, event.block)
 
-    log.info('{} minted {} xSushi in exchange for {} sushi - sushiStaked before {} sushiStaked after {}', [
+    log.info('{} minted {} xSuni in exchange for {} suex - suexStaked before {} suexStaked after {}', [
       event.params.to.toHex(),
       value.toString(),
       what.toString(),
-      user.sushiStaked.toString(),
-      user.sushiStaked.plus(what).toString(),
+      user.suexStaked.toString(),
+      user.suexStaked.plus(what).toString(),
     ])
 
-    if (user.xSushi == BIG_DECIMAL_ZERO) {
+    if (user.xSuni == BIG_DECIMAL_ZERO) {
       log.info('{} entered the bar', [user.id])
       user.bar = bar.id
     }
 
-    user.xSushiMinted = user.xSushiMinted.plus(value)
+    user.xSuniMinted = user.xSuniMinted.plus(value)
 
-    const sushiStakedUSD = what.times(sushiPrice)
+    const suexStakedUSD = what.times(suexPrice)
 
-    user.sushiStaked = user.sushiStaked.plus(what)
-    user.sushiStakedUSD = user.sushiStakedUSD.plus(sushiStakedUSD)
+    user.suexStaked = user.suexStaked.plus(what)
+    user.suexStakedUSD = user.suexStakedUSD.plus(suexStakedUSD)
 
     const days = event.block.timestamp.minus(user.updatedAt).divDecimal(BigDecimal.fromString('86400'))
 
-    const xSushiAge = days.times(user.xSushi)
+    const xSuniAge = days.times(user.xSuni)
 
-    user.xSushiAge = user.xSushiAge.plus(xSushiAge)
+    user.xSuniAge = user.xSuniAge.plus(xSuniAge)
 
     // Update last
-    user.xSushi = user.xSushi.plus(value)
+    user.xSuni = user.xSuni.plus(value)
 
     user.updatedAt = event.block.timestamp
 
     user.save()
 
     const barDays = event.block.timestamp.minus(bar.updatedAt).divDecimal(BigDecimal.fromString('86400'))
-    const barXsushi = bar.xSushiMinted.minus(bar.xSushiBurned)
-    bar.xSushiMinted = bar.xSushiMinted.plus(value)
-    bar.xSushiAge = bar.xSushiAge.plus(barDays.times(barXsushi))
-    bar.sushiStaked = bar.sushiStaked.plus(what)
-    bar.sushiStakedUSD = bar.sushiStakedUSD.plus(sushiStakedUSD)
+    const barxSuni = bar.xSuniMinted.minus(bar.xSuniBurned)
+    bar.xSuniMinted = bar.xSuniMinted.plus(value)
+    bar.xSuniAge = bar.xSuniAge.plus(barDays.times(barxSuni))
+    bar.suexStaked = bar.suexStaked.plus(what)
+    bar.suexStakedUSD = bar.suexStakedUSD.plus(suexStakedUSD)
     bar.updatedAt = event.block.timestamp
 
     const history = getHistory(event.block)
-    history.xSushiAge = bar.xSushiAge
-    history.xSushiMinted = history.xSushiMinted.plus(value)
-    history.xSushiSupply = bar.totalSupply
-    history.sushiStaked = history.sushiStaked.plus(what)
-    history.sushiStakedUSD = history.sushiStakedUSD.plus(sushiStakedUSD)
+    history.xSuniAge = bar.xSuniAge
+    history.xSuniMinted = history.xSuniMinted.plus(value)
+    history.xSuniSupply = bar.totalSupply
+    history.suexStaked = history.suexStaked.plus(what)
+    history.suexStakedUSD = history.suexStakedUSD.plus(suexStakedUSD)
     history.ratio = bar.ratio
     history.save()
   }
 
-  // Burned xSushi
+  // Burned xSuni
   if (event.params.to == ADDRESS_ZERO) {
-    log.info('{} burned {} xSushi', [event.params.from.toHex(), value.toString()])
+    log.info('{} burned {} xSuni', [event.params.from.toHex(), value.toString()])
 
     const user = getUser(event.params.from, event.block)
 
-    user.xSushiBurned = user.xSushiBurned.plus(value)
+    user.xSuniBurned = user.xSuniBurned.plus(value)
 
-    user.sushiHarvested = user.sushiHarvested.plus(what)
+    user.suexHarvested = user.suexHarvested.plus(what)
 
-    const sushiHarvestedUSD = what.times(sushiPrice)
+    const suexHarvestedUSD = what.times(suexPrice)
 
-    user.sushiHarvestedUSD = user.sushiHarvestedUSD.plus(sushiHarvestedUSD)
+    user.suexHarvestedUSD = user.suexHarvestedUSD.plus(suexHarvestedUSD)
 
     const days = event.block.timestamp.minus(user.updatedAt).divDecimal(BigDecimal.fromString('86400'))
 
-    const xSushiAge = days.times(user.xSushi)
+    const xSuniAge = days.times(user.xSuni)
 
-    user.xSushiAge = user.xSushiAge.plus(xSushiAge)
+    user.xSuniAge = user.xSuniAge.plus(xSuniAge)
 
-    const xSushiAgeDestroyed = user.xSushiAge.div(user.xSushi).times(value)
+    const xSuniAgeDestroyed = user.xSuniAge.div(user.xSuni).times(value)
 
-    user.xSushiAgeDestroyed = user.xSushiAgeDestroyed.plus(xSushiAgeDestroyed)
+    user.xSuniAgeDestroyed = user.xSuniAgeDestroyed.plus(xSuniAgeDestroyed)
 
-    // remove xSushiAge
-    user.xSushiAge = user.xSushiAge.minus(xSushiAgeDestroyed)
-    // Update xSushi last
-    user.xSushi = user.xSushi.minus(value)
+    // remove xSuniAge
+    user.xSuniAge = user.xSuniAge.minus(xSuniAgeDestroyed)
+    // Update xSuni last
+    user.xSuni = user.xSuni.minus(value)
 
-    if (user.xSushi == BIG_DECIMAL_ZERO) {
+    if (user.xSuni == BIG_DECIMAL_ZERO) {
       log.info('{} left the bar', [user.id])
       user.bar = null
     }
@@ -248,28 +248,28 @@ export function transfer(event: TransferEvent): void {
     user.save()
 
     const barDays = event.block.timestamp.minus(bar.updatedAt).divDecimal(BigDecimal.fromString('86400'))
-    const barXsushi = bar.xSushiMinted.minus(bar.xSushiBurned)
-    bar.xSushiBurned = bar.xSushiBurned.plus(value)
-    bar.xSushiAge = bar.xSushiAge.plus(barDays.times(barXsushi)).minus(xSushiAgeDestroyed)
-    bar.xSushiAgeDestroyed = bar.xSushiAgeDestroyed.plus(xSushiAgeDestroyed)
-    bar.sushiHarvested = bar.sushiHarvested.plus(what)
-    bar.sushiHarvestedUSD = bar.sushiHarvestedUSD.plus(sushiHarvestedUSD)
+    const barxSuni = bar.xSuniMinted.minus(bar.xSuniBurned)
+    bar.xSuniBurned = bar.xSuniBurned.plus(value)
+    bar.xSuniAge = bar.xSuniAge.plus(barDays.times(barxSuni)).minus(xSuniAgeDestroyed)
+    bar.xSuniAgeDestroyed = bar.xSuniAgeDestroyed.plus(xSuniAgeDestroyed)
+    bar.suexHarvested = bar.suexHarvested.plus(what)
+    bar.suexHarvestedUSD = bar.suexHarvestedUSD.plus(suexHarvestedUSD)
     bar.updatedAt = event.block.timestamp
 
     const history = getHistory(event.block)
-    history.xSushiSupply = bar.totalSupply
-    history.xSushiBurned = history.xSushiBurned.plus(value)
-    history.xSushiAge = bar.xSushiAge
-    history.xSushiAgeDestroyed = history.xSushiAgeDestroyed.plus(xSushiAgeDestroyed)
-    history.sushiHarvested = history.sushiHarvested.plus(what)
-    history.sushiHarvestedUSD = history.sushiHarvestedUSD.plus(sushiHarvestedUSD)
+    history.xSuniSupply = bar.totalSupply
+    history.xSuniBurned = history.xSuniBurned.plus(value)
+    history.xSuniAge = bar.xSuniAge
+    history.xSuniAgeDestroyed = history.xSuniAgeDestroyed.plus(xSuniAgeDestroyed)
+    history.suexHarvested = history.suexHarvested.plus(what)
+    history.suexHarvestedUSD = history.suexHarvestedUSD.plus(suexHarvestedUSD)
     history.ratio = bar.ratio
     history.save()
   }
 
-  // If transfer from address to address and not known xSushi pools.
+  // If transfer from address to address and not known xSuni pools.
   if (event.params.from != ADDRESS_ZERO && event.params.to != ADDRESS_ZERO) {
-    log.info('transfered {} xSushi from {} to {}', [
+    log.info('transfered {} xSuni from {} to {}', [
       value.toString(),
       event.params.from.toHex(),
       event.params.to.toHex(),
@@ -279,20 +279,20 @@ export function transfer(event: TransferEvent): void {
 
     const fromUserDays = event.block.timestamp.minus(fromUser.updatedAt).divDecimal(BigDecimal.fromString('86400'))
 
-    // Recalc xSushi age first
-    fromUser.xSushiAge = fromUser.xSushiAge.plus(fromUserDays.times(fromUser.xSushi))
-    // Calculate xSushiAge being transfered
-    const xSushiAgeTranfered = fromUser.xSushiAge.div(fromUser.xSushi).times(value)
-    // Subtract from xSushiAge
-    fromUser.xSushiAge = fromUser.xSushiAge.minus(xSushiAgeTranfered)
+    // Recalc xSuni age first
+    fromUser.xSuniAge = fromUser.xSuniAge.plus(fromUserDays.times(fromUser.xSuni))
+    // Calculate xSuniAge being transfered
+    const xSuniAgeTranfered = fromUser.xSuniAge.div(fromUser.xSuni).times(value)
+    // Subtract from xSuniAge
+    fromUser.xSuniAge = fromUser.xSuniAge.minus(xSuniAgeTranfered)
     fromUser.updatedAt = event.block.timestamp
 
-    fromUser.xSushi = fromUser.xSushi.minus(value)
-    fromUser.xSushiOut = fromUser.xSushiOut.plus(value)
-    fromUser.sushiOut = fromUser.sushiOut.plus(what)
-    fromUser.usdOut = fromUser.usdOut.plus(what.times(sushiPrice))
+    fromUser.xSuni = fromUser.xSuni.minus(value)
+    fromUser.xSuniOut = fromUser.xSuniOut.plus(value)
+    fromUser.suexOut = fromUser.suexOut.plus(what)
+    fromUser.usdOut = fromUser.usdOut.plus(what.times(suexPrice))
 
-    if (fromUser.xSushi == BIG_DECIMAL_ZERO) {
+    if (fromUser.xSuni == BIG_DECIMAL_ZERO) {
       log.info('{} left the bar by transfer OUT', [fromUser.id])
       fromUser.bar = null
     }
@@ -306,37 +306,37 @@ export function transfer(event: TransferEvent): void {
       toUser.bar = bar.id
     }
 
-    // Recalculate xSushi age and add incoming xSushiAgeTransfered
+    // Recalculate xSuni age and add incoming xSuniAgeTransfered
     const toUserDays = event.block.timestamp.minus(toUser.updatedAt).divDecimal(BigDecimal.fromString('86400'))
 
-    toUser.xSushiAge = toUser.xSushiAge.plus(toUserDays.times(toUser.xSushi)).plus(xSushiAgeTranfered)
+    toUser.xSuniAge = toUser.xSuniAge.plus(toUserDays.times(toUser.xSuni)).plus(xSuniAgeTranfered)
     toUser.updatedAt = event.block.timestamp
 
-    toUser.xSushi = toUser.xSushi.plus(value)
-    toUser.xSushiIn = toUser.xSushiIn.plus(value)
-    toUser.sushiIn = toUser.sushiIn.plus(what)
-    toUser.usdIn = toUser.usdIn.plus(what.times(sushiPrice))
+    toUser.xSuni = toUser.xSuni.plus(value)
+    toUser.xSuniIn = toUser.xSuniIn.plus(value)
+    toUser.suexIn = toUser.suexIn.plus(what)
+    toUser.usdIn = toUser.usdIn.plus(what.times(suexPrice))
 
-    const difference = toUser.xSushiIn.minus(toUser.xSushiOut).minus(toUser.xSushiOffset)
+    const difference = toUser.xSuniIn.minus(toUser.xSuniOut).minus(toUser.xSuniOffset)
 
-    // If difference of sushi in - sushi out - offset > 0, then add on the difference
-    // in staked sushi based on xSushi:Sushi ratio at time of reciept.
+    // If difference of suex in - suex out - offset > 0, then add on the difference
+    // in staked suex based on xSuni:suex ratio at time of reciept.
     if (difference.gt(BIG_DECIMAL_ZERO)) {
-      const sushi = toUser.sushiIn.minus(toUser.sushiOut).minus(toUser.sushiOffset)
+      const suex = toUser.suexIn.minus(toUser.suexOut).minus(toUser.suexOffset)
       const usd = toUser.usdIn.minus(toUser.usdOut).minus(toUser.usdOffset)
 
-      log.info('{} recieved a transfer of {} xSushi from {}, sushi value of transfer is {}', [
+      log.info('{} recieved a transfer of {} xSuni from {}, suex value of transfer is {}', [
         toUser.id,
         value.toString(),
         fromUser.id,
         what.toString(),
       ])
 
-      toUser.sushiStaked = toUser.sushiStaked.plus(sushi)
-      toUser.sushiStakedUSD = toUser.sushiStakedUSD.plus(usd)
+      toUser.suexStaked = toUser.suexStaked.plus(suex)
+      toUser.suexStakedUSD = toUser.suexStakedUSD.plus(usd)
 
-      toUser.xSushiOffset = toUser.xSushiOffset.plus(difference)
-      toUser.sushiOffset = toUser.sushiOffset.plus(sushi)
+      toUser.xSuniOffset = toUser.xSuniOffset.plus(difference)
+      toUser.suexOffset = toUser.suexOffset.plus(suex)
       toUser.usdOffset = toUser.usdOffset.plus(usd)
     }
 

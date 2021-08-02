@@ -9,6 +9,8 @@ export const BIG_DECIMAL_1E12 = BigDecimal.fromString('1e12')
 
 export const BIG_DECIMAL_1E18 = BigDecimal.fromString('1e18')
 
+export const BIG_DECIMAL_1E6 = BigDecimal.fromString('1e6')
+
 export const BIG_DECIMAL_ZERO = BigDecimal.fromString('0')
 
 export const BIG_DECIMAL_ONE = BigDecimal.fromString("1")
@@ -27,7 +29,11 @@ export const FACTORY_ADDRESS = Address.fromString("0x27C0dF6b874f0768B687C95367b
 
 export const ACC_SUNI_PRECISION = BigInt.fromI32(10750000)
 
+export const SUNI_BAR_ADDRESS = Address.fromString('0x065C13f1999827824dcc255049e815D8eb75769A')
 
+export const SUNI_TOKEN_ADDRESS = Address.fromString('0x3A49360098cF9061630211874398EC75704C0595')
+
+export const SUNI_ETH_PAIR_ADDRESS = Address.fromString('0x686530b6f6786898872888b76575ce647d3fd778')
 
 // minimum liquidity required to count towards tracked volume for pairs with small # of Lps
 export const MINIMUM_USD_THRESHOLD_NEW_PAIRS = BigDecimal.fromString(
