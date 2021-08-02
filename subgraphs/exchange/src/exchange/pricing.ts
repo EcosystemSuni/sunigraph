@@ -6,7 +6,7 @@ import {
   DAI_WETH_PAIR,
   FACTORY_ADDRESS,
   MINIMUM_LIQUIDITY_THRESHOLD_ETH,
-  SUSHI_USDT_PAIR,
+  SUNI_WETH_PAIR,
   USDC_WETH_PAIR,
   USDT_WETH_PAIR,
   WETH_ADDRESS,
@@ -23,7 +23,7 @@ import { Pair as PairContract } from '../../generated/templates/Pair/Pair'
 export const factoryContract = FactoryContract.bind(FACTORY_ADDRESS)
 
 export function getSushiPrice(): BigDecimal {
-  const pair = Pair.load(SUSHI_USDT_PAIR)
+  const pair = Pair.load(SUNI_WETH_PAIR)
 
   if (pair) {
     return pair.token1Price

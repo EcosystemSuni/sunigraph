@@ -46,6 +46,6 @@ export const MINIMUM_LIQUIDITY_THRESHOLD_ETH = BigDecimal.fromString(
   
   export const USDT_WETH_PAIR = "0x06da0fd433c1a5d7a4faa01111c044910a184553";
   
-  export const SUSHI_USDT_PAIR = "0x680a025da7b1be2c204d7745e809919bce074026";
+  export const SUNI_WETH_PAIR = "0x686530b6f6786898872888b76575ce647d3fd778";
 
   export const WETH_ADDRESS = Address.fromString("0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2");
