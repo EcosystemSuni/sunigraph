@@ -23,7 +23,7 @@ dataSources:
           file: ./abis/SuniFactory.json
         - name: Pair
           file: ./abis/SuniPair.json
-        - name: SushiToken
+        - name: SuniExchange
           file: ./abis/SuniExchange.json
         - name: ERC20
           file: ./abis/ERC20.json
@@ -59,7 +59,7 @@ templates:
         - User
       abis:
         - name: Pair
-          file: ./abis/SuniFactory.json
+          file: ./abis/SuniPair.json
         - name: Factory
           file: ./abis/SuniFactory.json
       eventHandlers:
