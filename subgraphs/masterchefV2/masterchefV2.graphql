@@ -5,7 +5,7 @@ type MasterChef @entity {
   #owner: Bytes!
   #migrator: Bytes!
 
-  #sushiPerBlock: BgInt! not needed till fully migrated over
+  #suniPerBlock: BgInt! not needed till fully migrated over
   totalAllocPoint: BigInt!
 
   pools: [Pool!] @derivedFrom(field: "masterChef")
@@ -27,9 +27,9 @@ type Pool @entity {
 
   allocPoint: BigInt!
   lastRewardBlock: BigInt!
-  accSushiPerShare: BigInt!
+  accSuexPerShare: BigInt!
 
-  slpBalance: BigInt!
+  segBalance: BigInt!
 
   users: [User!]! @derivedFrom(field: "pool")
   userCount: BigInt!

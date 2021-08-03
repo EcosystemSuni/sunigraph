@@ -1,6 +1,6 @@
 import { User } from '../../generated/schema'
 import { BigInt, Address, ethereum } from '@graphprotocol/graph-ts'
-import { BIG_INT_ZERO, BIG_INT_ONE, MINI_CHEF_ADDRESS } from 'const'
+import { BIG_INT_ZERO, BIG_INT_ONE, MINI_CHEF_ADDRESS } from '../const'
 import { getMasterChef } from './masterChef'
 import { getPool } from './pool'
 

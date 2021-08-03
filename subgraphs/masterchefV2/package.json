@@ -2,16 +2,18 @@
     "name": "masterchefV2",
     "license": "MIT",
     "version": "1.0.0",
-    "author": "SushiSwap",
+    "author": "SuniExchange",
     "scripts": {
-        "codegen": "graph codegen masterchefV2.yaml",
-        "build": "graph build masterchefV2.yaml",
-        "create-local": "graph create --node http://localhost:8020/ /sushiswap/sushiswap",
-        "remove-local": "graph remove --node http://localhost:8020/ /sushiswap/sushiswap",
-        "deploy-local": "graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 /sushiswap/sushiswap",
-
-        "deploy:mainnet": "graph deploy --node https://api.thegraph.com/deploy/ --ipfs https://api.thegraph.com/ipfs/ sushiswap/master-chefv2 masterchefV2.yaml",
-
+        "codegen": "graph codegen subgraph.yaml",
+        "build": "graph build subgraph.yaml",
+        "deploy": "graph deploy --node https://api.thegraph.com/deploy/ suni/master-chef",
+        "create-local": "graph create --node http://localhost:8020/ suni/master-chef",
+        "remove-local": "graph remove --node http://localhost:8020/ suni/master-chef",
+        "deploy-local": "graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 suni/master-chef",
+        "deploy:mainnet": "graph deploy --node https://api.thegraph.com/deploy/ --ipfs https://api.thegraph.com/ipfs/ suni/master-chef masterchefV2.yaml",
         "prepare:mainnet": "mustache config/mainnet.json masterchefV2.template.yaml > masterChefV2.yaml"
+    },
+    "dependencies": {
+        "@graph-ts/graph-lib": "^1.6.0"
     }
 }
